@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graham's Quest — GT Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-title">⚔️ GRAHAM'S QUEST</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">🎮 The Game</a>
+            <a href="reading.html" class="nav-link">📜 Reading Log</a>
+            <a href="projects.html" class="nav-link">🗺️ Future Quests</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="hero">
+            <div class="hero-text">
+                <div class="terminal-line typing-line">
+                    <span class="prompt">&gt;</span> <span class="typed-text">WELCOME, ADVENTURER.</span>
+                </div>
+                <h1 class="hero-title">Graham's GT Portfolio</h1>
+                <p class="hero-subtitle">Programmer · Reader · Explorer</p>
+                <p class="hero-flavor">You find yourself at the entrance of a portfolio dungeon.<br>
+                A faint glow emanates from the terminal ahead...</p>
+            </div>
+        </header>
+
+        <section class="game-section">
+            <h2 class="section-title">⚔️ The Three Jewels — A Text Adventure</h2>
+            <p class="section-desc">I wrote this text adventure game in C, inspired by classic games like Zork.
+            It runs right in your browser — the C code is compiled to WebAssembly using Emscripten.
+            Type commands like <code>look</code>, <code>go north</code>, or <code>take jewel</code> to play.</p>
+
+            <div class="game-terminal" id="game-terminal">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">the_three_jewels.wasm</span>
+                </div>
+                <div class="terminal-body" id="terminal-output">
+                    <p class="terminal-text">Loading game...</p>
+                </div>
+                <div class="terminal-input-row">
+                    <span class="prompt">&gt;</span>
+                    <input type="text" id="game-input" class="terminal-input" placeholder="enter command..." autocomplete="off" autofocus>
+                </div>
+            </div>
+
+            <div class="tech-badges">
+                <span class="badge">C</span>
+                <span class="badge">WebAssembly</span>
+                <span class="badge">Emscripten</span>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2 class="section-title">📋 About This Portfolio</h2>
+            <p>Hi, I'm Graham. I'm 13 and I love programming, reading, and building things.
+            This portfolio showcases what I've been working on this past year for my Gifted &amp; Talented program.
+            The site itself is hand-written HTML, CSS, and JavaScript — hosted on GitHub Pages.</p>
+            <p>Use the navigation above to explore my reading list and upcoming projects.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Built by Graham · 2026 · <a href="https://github.com/gramankin" target="_blank">GitHub</a></p>
+    </footer>
+
+    <!-- Emscripten glue: captures printf output and sends input to WASM -->
+    <script>
+        // Terminal output element
+        const terminalOutput = document.getElementById('terminal-output');
+        const gameInput = document.getElementById('game-input');
+        let outputBuffer = '';
+        let processInput = null;
+
+        // Clear loading message
+        terminalOutput.innerHTML = '';
+
+        // Scroll terminal to bottom
+        function scrollToBottom() {
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        // Append text to terminal (handles newlines properly)
+        function appendToTerminal(text) {
+            outputBuffer += text;
+
+            // Process complete lines
+            while (outputBuffer.includes('\n')) {
+                const newlineIdx = outputBuffer.indexOf('\n');
+                const line = outputBuffer.substring(0, newlineIdx);
+                outputBuffer = outputBuffer.substring(newlineIdx + 1);
+
+                const p = document.createElement('p');
+                p.className = 'terminal-text';
+                p.textContent = line || '\u00A0'; // non-breaking space for empty lines
+                terminalOutput.appendChild(p);
+            }
+
+            scrollToBottom();
+        }
+
+        // Flush any remaining buffer
+        function flushBuffer() {
+            if (outputBuffer.length > 0) {
+                const p = document.createElement('p');
+                p.className = 'terminal-text';
+                p.textContent = outputBuffer;
+                terminalOutput.appendChild(p);
+                outputBuffer = '';
+                scrollToBottom();
+            }
+        }
+
+        // Emscripten Module configuration
+        var Module = {
+            // Capture stdout
+            print: function(text) {
+                appendToTerminal(text + '\n');
+            },
+            // Capture stderr
+            printErr: function(text) {
+                console.warn('stderr:', text);
+            },
+            onRuntimeInitialized: function() {
+                flushBuffer();
+                // Wrap the C process_input function
+                processInput = Module.cwrap('process_input', null, ['string']);
+                gameInput.disabled = false;
+                gameInput.focus();
+            }
+        };
+
+        // Handle input
+        gameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const input = gameInput.value.trim();
+                if (input === '' || !processInput) return;
+
+                // Echo the command to terminal
+                const echoLine = document.createElement('p');
+                echoLine.className = 'terminal-text';
+                echoLine.innerHTML = '<span style="color:#fbbf24;">></span> ' + input;
+                terminalOutput.appendChild(echoLine);
+
+                // Clear input
+                gameInput.value = '';
+
+                // Send to WASM
+                processInput(input);
+                flushBuffer();
+                scrollToBottom();
+            }
+        });
+
+        // Command history
+        let commandHistory = [];
+        let historyIndex = -1;
+
+        gameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && gameInput.value.trim()) {
+                commandHistory.unshift(gameInput.value.trim());
+                historyIndex = -1;
+            }
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    gameInput.value = commandHistory[historyIndex];
+                }
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    gameInput.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = -1;
+                    gameInput.value = '';
+                }
+            }
+        });
+    </script>
+
+    <!-- Load the Emscripten-compiled JS (this file is generated by emcc) -->
+    <script src="adventure.js"></script>
+</body>
+</html>

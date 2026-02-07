@@ -1,0 +1,622 @@
+/* ============================================
+   GRAHAM'S QUEST — GT Portfolio Stylesheet
+   Retro Terminal / Dungeon Aesthetic
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Merriweather:wght@400;700&display=swap');
+
+/* --- CSS Variables --- */
+:root {
+    --bg-deep:       #0a0e14;
+    --bg-surface:    #111820;
+    --bg-card:       #161d27;
+    --bg-card-hover: #1c2535;
+    --border:        #2a3545;
+    --border-glow:   #3a5a3a;
+
+    --text-primary:  #c8d6c8;
+    --text-bright:   #e0f0e0;
+    --text-dim:      #607060;
+    --text-muted:    #4a5a4a;
+
+    --green:         #4ade80;
+    --green-dim:     #2d8a4e;
+    --green-glow:    rgba(74, 222, 128, 0.15);
+    --gold:          #fbbf24;
+    --gold-dim:      #92700e;
+    --purple:        #a78bfa;
+    --purple-dim:    #6d5aad;
+    --red:           #f87171;
+    --blue:          #60a5fa;
+
+    --font-mono:     'JetBrains Mono', 'Courier New', monospace;
+    --font-pixel:    'Press Start 2P', monospace;
+    --font-reading:  'Merriweather', Georgia, serif;
+
+    --radius:        8px;
+    --radius-lg:     12px;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background-color: var(--bg-deep);
+    min-height: 100vh;
+}
+
+/* Scanline overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+}
+
+a {
+    color: var(--green);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--text-bright);
+    text-shadow: 0 0 8px var(--green-glow);
+}
+
+code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--green);
+}
+
+/* --- Navigation --- */
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-title {
+    font-family: var(--font-pixel);
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.nav-link {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.nav-link:hover {
+    color: var(--text-bright);
+    background: var(--bg-card);
+    border-color: var(--border);
+    text-shadow: none;
+}
+
+.nav-link.active {
+    color: var(--green);
+    background: var(--bg-card);
+    border-color: var(--border-glow);
+    box-shadow: 0 0 10px var(--green-glow);
+}
+
+/* --- Layout --- */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+
+/* --- Hero Section (index page) --- */
+.hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+}
+
+.hero-title {
+    font-family: var(--font-pixel);
+    font-size: 1.25rem;
+    color: var(--green);
+    margin: 1rem 0 0.5rem;
+    text-shadow: 0 0 20px var(--green-glow);
+    letter-spacing: 1px;
+    line-height: 1.8;
+}
+
+.hero-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.hero-flavor {
+    font-family: var(--font-reading);
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+/* --- Terminal Line --- */
+.terminal-line {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--green);
+    margin-bottom: 0.5rem;
+}
+
+.prompt {
+    color: var(--gold);
+    margin-right: 0.5rem;
+}
+
+.typing-line .typed-text {
+    border-right: 2px solid var(--green);
+    padding-right: 4px;
+    animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+    50% { border-color: transparent; }
+}
+
+.blink {
+    animation: blink-cursor 1s step-end infinite;
+    color: var(--green);
+}
+
+/* --- Section Styles --- */
+.section-title {
+    font-family: var(--font-pixel);
+    font-size: 0.8rem;
+    color: var(--gold);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 1px;
+    line-height: 1.8;
+}
+
+.section-desc {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+}
+
+/* --- Page Header --- */
+.page-header {
+    padding: 2rem 0 1rem;
+}
+
+.page-title {
+    font-family: var(--font-pixel);
+    font-size: 1.1rem;
+    color: var(--green);
+    margin: 0.75rem 0 0.5rem;
+    text-shadow: 0 0 20px var(--green-glow);
+    line-height: 1.8;
+}
+
+.page-subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+
+/* --- Game Terminal --- */
+.game-terminal {
+    background: #000;
+    border: 2px solid var(--border-glow);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 0 30px var(--green-glow), inset 0 0 30px rgba(0, 0, 0, 0.5);
+    margin: 1.5rem 0;
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.terminal-dot.red    { background: #ff5f57; }
+.terminal-dot.yellow { background: #febc2e; }
+.terminal-dot.green  { background: #28c840; }
+
+.terminal-title {
+    margin-left: 8px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+}
+
+.terminal-body {
+    padding: 1.25rem;
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.terminal-text {
+    color: var(--green);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.terminal-text.dim {
+    color: var(--text-muted);
+}
+
+.terminal-input-row {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--green);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    caret-color: var(--green);
+}
+
+.terminal-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* --- Tech Badges --- */
+.tech-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-glow);
+    color: var(--green);
+    background: var(--green-glow);
+    letter-spacing: 0.5px;
+}
+
+/* --- About Section --- */
+.about-section {
+    margin-top: 1rem;
+}
+
+.about-section p {
+    margin-bottom: 1rem;
+    line-height: 1.8;
+}
+
+/* --- Book List (reading page) --- */
+.book-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.book-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.2s;
+}
+
+.book-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-glow);
+    box-shadow: 0 0 10px var(--green-glow);
+}
+
+.book-emoji {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.book-title {
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 2px;
+}
+
+.book-author {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.scroll-note {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* --- Quest Board (projects page) --- */
+.quest-board {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.quest-card {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.quest-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.quest-card.legendary::before { background: var(--gold); }
+.quest-card.epic::before      { background: var(--purple); }
+.quest-card.rare::before      { background: var(--blue); }
+.quest-card.uncommon::before  { background: var(--green); }
+
+.quest-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-glow);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.quest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.quest-difficulty {
+    font-family: var(--font-pixel);
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    line-height: 1.6;
+}
+
+.quest-card.legendary .quest-difficulty { color: var(--gold); }
+.quest-card.epic .quest-difficulty      { color: var(--purple); }
+.quest-card.rare .quest-difficulty      { color: var(--blue); }
+
+.quest-status {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+.quest-title {
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+}
+
+.quest-desc {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.quest-rewards {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.reward {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--bg-surface);
+}
+
+.quest-card.legendary .reward { border-color: var(--gold-dim); color: var(--gold); }
+.quest-card.epic .reward      { border-color: var(--purple-dim); color: var(--purple); }
+
+/* --- Roadmap --- */
+.roadmap-section {
+    margin-top: 3rem;
+}
+
+.roadmap {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+}
+
+.roadmap-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.step-marker {
+    font-size: 1.25rem;
+    width: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.step-text {
+    font-size: 0.9rem;
+}
+
+.roadmap-step.completed .step-text {
+    color: var(--text-dim);
+}
+
+.roadmap-step.current .step-text {
+    color: var(--green);
+    font-weight: 700;
+}
+
+.roadmap-step.future .step-text {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.roadmap-connector {
+    width: 2px;
+    height: 20px;
+    background: var(--border);
+    margin-left: calc(1rem - 1px);
+}
+
+/* --- Footer --- */
+.footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+    .nav-bar {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .nav-links {
+        gap: 0.15rem;
+    }
+
+    .nav-link {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .hero-title {
+        font-size: 1rem;
+    }
+
+    .page-title {
+        font-size: 0.9rem;
+    }
+
+    .quest-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .container {
+        padding: 1.5rem 1rem 3rem;
+    }
+}
+
+/* --- Fade-in animation --- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero, .page-header {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.game-section, .about-section, .book-card, .quest-card, .roadmap-section {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.book-card:nth-child(1) { animation-delay: 0.1s; }
+.book-card:nth-child(2) { animation-delay: 0.15s; }
+.book-card:nth-child(3) { animation-delay: 0.2s; }
+.book-card:nth-child(4) { animation-delay: 0.25s; }
+.book-card:nth-child(5) { animation-delay: 0.3s; }
+.book-card:nth-child(6) { animation-delay: 0.35s; }
+.book-card:nth-child(7) { animation-delay: 0.4s; }
+.book-card:nth-child(8) { animation-delay: 0.45s; }
+
+.quest-card:nth-child(1) { animation-delay: 0.1s; }
+.quest-card:nth-child(2) { animation-delay: 0.2s; }
+
+.game-section { animation-delay: 0.15s; }
+.about-section { animation-delay: 0.3s; }
+.roadmap-section { animation-delay: 0.3s; }
